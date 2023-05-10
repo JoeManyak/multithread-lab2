@@ -1,4 +1,6 @@
-package Matrix;
+package Stripe;
+
+import Matrix.Matrix;
 
 public class StripeController {
     public static Matrix Multiply(Matrix matrix1, Matrix matrix2, int stripesCount) {

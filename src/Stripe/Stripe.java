@@ -1,4 +1,6 @@
-package Matrix;
+package Stripe;
+
+import Matrix.Matrix;
 
 public class Stripe extends Thread {
     private Matrix matrix;

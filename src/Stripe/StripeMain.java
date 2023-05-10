@@ -1,4 +1,6 @@
-package Matrix;
+package Stripe;
+
+import Matrix.Matrix;
 
 public class StripeMain {
     public static void main(String[] args) {
