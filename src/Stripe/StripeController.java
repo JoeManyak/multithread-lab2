@@ -2,31 +2,31 @@ package Stripe;
 
 import Matrix.Matrix;
 
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class StripeController {
-    public static Matrix Multiply(Matrix matrix1, Matrix matrix2, int stripesCount) {
-        var resultMatrix = new Matrix("Result Matrix", matrix1.getXSize(), matrix2.getYSize());
-        var matrix1XSize = matrix1.getXSize();
-        matrix1XSize += matrix1XSize % stripesCount;
-        var stripeSize = matrix1XSize / stripesCount;
+    public static Matrix Multiply(Matrix matrix1, Matrix matrix2, int threadPoolSize) throws InterruptedException {
         if (matrix1.getYSize() != matrix2.getXSize()) {
             throw new RuntimeException("Matrixes can't be multiplied");
         }
 
-        for (int i = 0; i < stripesCount; i++) {
-            var left = i * stripeSize;
-            var right = (i + 1) * stripeSize - 1;
-            if (right >= matrix1.getXSize()) {
-                right = matrix1.getXSize() - 1;
-            }
+        ExecutorService pool =  Executors.newFixedThreadPool(threadPoolSize);
+        ArrayList<Callable<Object>> tasks = new ArrayList<>();
 
-            var stripe = new Stripe(matrix1, matrix2, left , right, resultMatrix);
-            stripe.start();
-            try {
-                stripe.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        Matrix transposedMatrix2 = matrix2.transpose();
+        Matrix resultMatrix = new Matrix("Result", matrix1.getXSize(), matrix2.getYSize());
+
+        for (var i = 0; i< matrix1.getXSize(); i++){
+            var matrix1Row = matrix1.getRow(i);
+            for (var j = 0; j < transposedMatrix2.getXSize(); j++){
+                tasks.add(Executors.callable(new Stripe(matrix1Row, transposedMatrix2.getRow(j), i, j, resultMatrix)));
             }
         }
+
+        pool.invokeAll(tasks);
 
         return resultMatrix;
     }

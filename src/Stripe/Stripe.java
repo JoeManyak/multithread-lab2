@@ -3,37 +3,27 @@ package Stripe;
 import Matrix.Matrix;
 
 public class Stripe extends Thread {
-    private Matrix matrix;
-
-    private int firstRowIndex;
-    private int lastRowIndex;
-
-    private Matrix multiplyMatrix;
+    private int[] matrix1Row;
+    private int matrix1RowIndex;
+    private int[] matrix2Col;
+    private int matrix2ColIndex;
     private Matrix resultMatrix;
 
-    public Stripe(Matrix matrix, Matrix multiplyMatrix, int firstRowIndex, int lastRowIndex, Matrix resultMatrix) {
-        this.matrix = matrix;
-        this.firstRowIndex = firstRowIndex;
-        this.lastRowIndex = lastRowIndex;
-        this.multiplyMatrix = multiplyMatrix;
+    public Stripe(int[] matrix1Row, int[] matrix2Col, int matrix1RowIndex, int matrix2ColIndex, Matrix resultMatrix) {
+        this.matrix1Row = matrix1Row;
+        this.matrix2Col = matrix2Col;
+        this.matrix1RowIndex = matrix1RowIndex;
+        this.matrix2ColIndex = matrix2ColIndex;
         this.resultMatrix = resultMatrix;
     }
 
     @Override
     public void run() {
-        for (int i = firstRowIndex; i <= lastRowIndex; i++) {
-            for (int j = 0; j < multiplyMatrix.getYSize(); j++) {
-                int result = 0;
-                if (i==1 && j == 2){
-                    System.out.println("Debug");
-                }
-                for (int k = 0; k < matrix.getYSize(); k++) {
-                    var a = matrix.getData(i, k);
-                    var b = multiplyMatrix.getData(k, j);
-                    result +=  a * b;
-                }
-                resultMatrix.setData(i,j, result);
-            }
+        // matrix1Row.length == matrix2Col.length
+        var sum = 0;
+        for (int i = 0; i < matrix1Row.length; i++) {
+            sum += matrix1Row[i] * matrix2Col[i];
         }
+        resultMatrix.setData(matrix1RowIndex, matrix2ColIndex, sum);
     }
 }

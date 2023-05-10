@@ -43,6 +43,19 @@ public class Matrix {
     public int getData(int x, int y){
         return data[x][y];
     }
+    public int[] getRow(int x){
+        return data[x];
+    }
+
+    public Matrix transpose(){
+        Matrix transposedMatrix = new Matrix("Transposed "+this.label, ySize, xSize);
+        for (var i = 0; i< xSize; i++){
+            for (var j = 0; j < ySize; j++){
+                transposedMatrix.setData(j, i, data[i][j]);
+            }
+        }
+        return transposedMatrix;
+    }
 
     public void setData(int x, int y, int value){
         data[x][y] = value;
