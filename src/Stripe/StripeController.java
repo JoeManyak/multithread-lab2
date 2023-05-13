@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class StripeController {
-    public static Matrix Multiply(Matrix matrix1, Matrix matrix2, int threadPoolSize) throws InterruptedException {
+    public static Matrix Multiply(Matrix matrix1, Matrix matrix2, int threadPoolSize) {
         if (matrix1.getYSize() != matrix2.getXSize()) {
             throw new RuntimeException("Matrixes can't be multiplied");
         }
@@ -26,7 +26,11 @@ public class StripeController {
             }
         }
 
-        pool.invokeAll(tasks);
+        try {
+            pool.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         return resultMatrix;
     }
